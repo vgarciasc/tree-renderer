@@ -1,0 +1,95 @@
+<html>
+  <head>
+    <title>Tree data viewer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
+    <script src="tree.js"></script>
+    <script src="tree_viz.js"></script>
+    <script src="sketch.js"></script>
+    <style>
+        body {
+            font-family: Verdana;
+            font-size: 12px;
+            padding: 10px;
+        }
+
+        #sidebar {
+            float: left;
+            width: 30%;
+            margin-right: 10px;
+        }
+
+        #canvas-holder {
+            float: left;
+            max-width: 65%;
+            border: dashed 3px grey;
+        }
+
+        select, input {
+            width: 80%;
+        }
+    </style>
+    <!-- <link rel="stylesheet" 
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+    crossorigin="anonymous"> -->
+  </head>
+  <body>
+    <div>
+        <div id="sidebar" onload="updateConfigs(); updateTree();">
+            <img align=left src="https://web.archive.org/web/20091027005003im_/http://it.geocities.com/aniellobarra/Img/Clip/Animated/tree.gif">
+            <h1>Tree data viewer</h1>
+            <p>An online tool for visualizing tree data structures.</p>
+            <hr>
+            <h2>Content</h2>
+            <textarea id="tree-input" style="width: 100%;" rows=10 onload="updateTree()" onchange="updateTree()" onkeyup="updateTree()">- Test 1
+-- LEFT
+-- Test 2
+--- Test 3
+---- LEFT
+---- RIGHT
+--- RIGHT</textarea>
+            <button onclick="updateConfigs(); updateTree()">
+                Update tree
+            </button>
+            <h2>Style</h2>
+            <table style="font-size: 10px;">
+                <tr>
+                    <td>Node width: <input onchange="updateConfigs()" type="number" value=100 id="node_width"></input></td>
+                    <td>Node height: <input onchange="updateConfigs()" type="number" value=50 id="node_height"></input></td>
+                </tr>
+                <tr>
+                    <td>Minimum node width: <input onchange="updateConfigs()" type="number" value=80 id="min_node_width"></input></td>
+                    <td>Maximum node width: <input onchange="updateConfigs()" type="number" value=200 id="max_node_width"></input></td>
+                </tr>
+                <tr>
+                    <td>Horizontal space between nodes: <input onchange="updateConfigs()" type="number" value=40 id="padding_x"></input></td>
+                    <td>Vertical space between nodes: <input onchange="updateConfigs()" type="number" value=40 id="padding_y"></input></td>
+                </tr>
+                <tr>
+                    <td>Node width style:<br>
+                    <select id="node_width_style" onchange="updateConfigs()">
+                        <option value="fixed">Fixed size</option>
+                        <option value="fit">Fit to text</option>
+                    </select></td>
+                    <td>Node style: <br>
+                    <select id="node_style" onchange="updateConfigs()">
+                        <option value="rounded_rect">Rounded rectangle</option>
+                        <option value="rect">Rectangle</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>Edge style: <br>
+                    <select id="edge_style" onchange="updateConfigs()">
+                        <option value="line">Diagonal lines</option>
+                        <option value="rect">Bracket style</option>
+                    </select></td>
+                </tr>
+            </table>
+            <hr>
+        </div>
+        <div id="canvas-holder">
+        </div>
+    </div>
+  </body>
+</html>
