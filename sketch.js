@@ -183,7 +183,7 @@ function exportImage() {
     pg.pop();
 
     let d = new Date();
-    var filename = "tree_view_ " + d.toISOString().split('T')[0] + 
+    var filename = "tree_view_" + d.toISOString().split('T')[0] + 
         "_" + d.getHours() + "-" + d.getMinutes() + ".png"
     pg.save(filename)
 }
