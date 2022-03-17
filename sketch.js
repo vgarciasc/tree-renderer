@@ -56,24 +56,32 @@ let offset = {x: 250, y: 150};
 let dragging = false;
 let lastMouse = {x: 0, y: 0};
 
-function setup() {
-    var canvas = createCanvas(800, 600);
-    canvas.parent("canvas-holder");
+let cv = null;
+let mg = null;
 
-    textAlign(CENTER);
+function setup() {
+    cv = createCanvas(800, 600);
+    cv.parent("canvas-holder");
+
+    mg = createGraphics(5000, 5000);
+    mg.textAlign(CENTER);
+
     updateTree();
 }
 
 function draw() {
     background(255);
     
-    push();
-    translate(offset.x, offset.y);
-    scale(zoom);
+    mg.background(255);
 
-    tree.draw();
+    mg.push();
+    mg.translate(offset.x, offset.y);
+    mg.scale(zoom);
 
-    pop();
+    tree.draw(mg);
+    image(mg, 0, 0);
+
+    mg.pop();
 }
 
 function mousePressed() {
@@ -157,4 +165,25 @@ function updateTree() {
         tree = new VisualizableTree(nodes, config);
         tree.initialize();
     }
+}
+
+function exportImage() {
+    var pad = 5 * zoom;
+
+    var pg = createGraphics(
+        tree.width * zoom + 2*pad,
+        tree.height * zoom + 2*pad);
+    pg.textAlign(CENTER);
+
+    pg.background(255);
+    pg.push();
+    pg.translate(pad - tree.min_x * zoom, pad);
+    pg.scale(zoom);
+    tree.draw(pg);
+    pg.pop();
+
+    let d = new Date();
+    var filename = "tree_view_ " + d.toISOString().split('T')[0] + 
+        "_" + d.getHours() + "-" + d.getMinutes() + ".png"
+    pg.save(filename)
 }

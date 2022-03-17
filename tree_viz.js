@@ -8,7 +8,14 @@ class VisualizableTree extends Tree {
         this.calculateFinalPositions(root);
     }
 
-    draw() {        
+    draw(buffer) {
+        this.buffer = buffer;
+
+        this.max_x = 0;
+        this.max_y = 0;
+        this.min_x = 10000;
+        this.min_y = 10000;
+
         this.drawNode(this.nodes[0]);
     }
     
@@ -181,20 +188,35 @@ class VisualizableTree extends Tree {
 
         switch (this.config.node_style) {
             case "rounded_rect":
-                rect(rectX, y, nodeWidth, config.node_height, 5)
+                this.buffer.rect(rectX, y, nodeWidth, config.node_height, 5)
                 break;
             case "rect":
             default:
-                rect(rectX, y, nodeWidth, config.node_height)
+                this.buffer.rect(rectX, y, nodeWidth, config.node_height)
                 break;
         }
         
-        text(
-            node.label,
-            rectX,
-            y + config.node_height / 2.5,
-            nodeWidth,
-            config.node_height); 
+        this.buffer.text(node.label,
+                rectX,
+                y + config.node_height / 2.5,
+                nodeWidth,
+                config.node_height);
+
+        if (rectX + nodeWidth > this.max_x) {
+            this.max_x = round(rectX + nodeWidth);
+        }
+        if (rectX < this.min_x) {
+            this.min_x = round(rectX);
+        }
+        if (y + config.node_height > this.max_y) {
+            this.max_y = round(y + config.node_height);
+        }
+        if (y < this.min_y) {
+            this.min_y = round(y);
+        }
+
+        this.width = this.max_x - this.min_x;
+        this.height = this.max_y - this.min_y;
     }
 
     drawNodeEdges(node, x, y) {
@@ -212,18 +234,14 @@ class VisualizableTree extends Tree {
     drawNodeEdgesDirectLine(node, x, y) {
         var children = this.getChildren(node);
         var config = this.config;
-        
-        push();
-        translate(x, y);
 
         for (var child of children) {
-            line(config.node_width / 2,
-                 config.node_height,
-                 child.x * (config.node_width + config.padding_x) + config.node_width/2 - x,
-                 child.y * (config.node_height + config.padding_y) - y)
+            this.buffer.line(
+                x + config.node_width / 2,
+                y + config.node_height,
+                child.x * (config.node_width + config.padding_x) + config.node_width/2,
+                child.y * (config.node_height + config.padding_y))
         }
-
-        pop();
     }
     
     drawNodeEdgesRectangular(node, x, y) {
@@ -231,29 +249,27 @@ class VisualizableTree extends Tree {
         var parent = this.getParent(node);
         var config = this.config;
         
-        push();
-        translate(x, y);
-        
         if (parent != null) {
-            line(config.node_width / 2,
-                 0,
-                 config.node_width / 2,
-                 - config.padding_y / 2);
+            this.buffer.line(
+                x + config.node_width / 2,
+                y,
+                x + config.node_width / 2,
+                y - config.padding_y / 2);
         }
             
         if (children.length > 0) {
-            line(config.node_width / 2,
-                config.node_height,
-                config.node_width / 2,
-                config.node_height + config.padding_y / 2);
+            this.buffer.line(
+                x + config.node_width / 2,
+                y + config.node_height,
+                x + config.node_width / 2,
+                y + config.node_height + config.padding_y / 2);
         }
-        pop();
         
         if (children.length > 0) {
             var leftmost_child = children[0];
             var rightmost_child = children[children.length - 1];
             
-            line(
+            this.buffer.line(
                 leftmost_child.x * (config.padding_x + config.node_width) + config.node_width/2,
                 node.y * (config.node_height + config.padding_y) + config.node_height + config.padding_y/2,
                 rightmost_child.x * (config.padding_x + config.node_width) + config.node_width/2,
