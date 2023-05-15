@@ -196,9 +196,10 @@ class VisualizableTree extends Tree {
                 break;
         }
         
+        this.buffer.textAlign(CENTER, CENTER)
         this.buffer.text(node.label,
                 rectX,
-                y + config.node_height / 2.5,
+                y,
                 nodeWidth,
                 config.node_height);
 
